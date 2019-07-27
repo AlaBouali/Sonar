@@ -15,6 +15,7 @@ except:
 class sc(threading.Thread):
  def run(self):
   global stop
+  stop=False
   ti=time.time()
   print("="*25)
   print("\n[*]Target: {}\n[*]Date: {}".format(target.get(),datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
