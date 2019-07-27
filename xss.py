@@ -79,7 +79,7 @@ Label(main, text = "",background='light sky blue').grid(row=10)
 ua=[""]
 ua+=bane.ua
 li=bane.read_file('xss.txt')
-pl=[]
+pl=['']
 for x in li:
  pl.append(x.strip())
 prox=[""]
