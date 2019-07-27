@@ -12,33 +12,54 @@ except:
  print("You need to install: bane")
  sys.exit()
 
+class sc(threading.Thread):
+ def run(self):
+  global stop
+  ti=time.time()
+  print("="*25)
+  print("\n[*]Target: {}\n[*]Date: {}".format(target.get(),datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
+  crl=[target.get()]
+  if crawl.get()=='On':
+   crl+=bane.crawl(target.get(),bypass=True)
+  pr=proxy.get()
+  if len(pr)==0:
+   pr=None
+  if method.get()=="GET":
+   get=True
+   post=False
+  elif method.get()=="POST":
+   get=False
+   post=True
+  else:
+   get=True
+   post=True
+  fresh=False
+  if refresh.get()=="On":
+   fresh=True
+  ck=None
+  c=cookie.get()
+  if len(c)>0:
+   ck=c
+  for x in crl:
+   if stop==True:
+    break
+   print("[*]URL: {}".format(x))
+   bane.xss(x,payload=payload.get(),proxy=pr,get=get,post=post,user_agent=user_agent.get(),fresh=fresh,cookie=ck)
+  print("[*]Test was finished at: {}\n[*]Duration: {} seconds\n".format(datetime.now().strftime("%d/%m/%Y %H:%M:%S"),int(time.time()-ti)))
+  print("="*25)
+
+stop=False
+
 def scan():
- ti=time.time()
- print("\n\n")
- print("="*25)
- print("\n[*]Target: {}\n[*]Date: {}".format(target.get(),datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
- pr=proxy.get()
- if len(pr)==0:
-  pr=None
- if method.get()=="GET":
-  get=True
-  post=False
- elif method.get()=="POST":
-  get=False
-  post=True
- else:
-  get=True
-  post=True
- fresh=False
- if refresh.get()=="On":
-  fresh=True
- ck=None
- c=cookie.get()
- if len(c)>0:
-  ck=c
- bane.xss(target.get(),payload=payload.get(),proxy=pr,get=get,post=post,user_agent=user_agent.get(),fresh=fresh,cookie=ck)
- print("[*]Test was finished at: {}\n[*]Duration: {} seconds\n".format(datetime.now().strftime("%d/%m/%Y %H:%M:%S"),int(time.time()-ti)))
- print("="*25)
+ sc().start()
+
+class ki(threading.Thread):
+ def run(self):
+  global stop
+  stop=True
+
+def kill():
+ ki().start()
 
 main = Tk()
 main.title("XSS Sonar")
@@ -51,23 +72,16 @@ Label(main, text = "User-Agent:",background='light sky blue').grid(row=4)
 Label(main, text = "Payload:",background='light sky blue').grid(row=5)
 Label(main, text = "HTTP Proxy:",background='light sky blue').grid(row=6)
 Label(main, text = "Refresh:",background='light sky blue').grid(row=7)
-Label(main, text = "",background='light sky blue').grid(row=8)
+Label(main, text = "Crawl",background='light sky blue').grid(row=8)
 Label(main, text = "",background='light sky blue').grid(row=9)
+Label(main, text = "",background='light sky blue').grid(row=10)
 
 ua=[""]
 ua+=bane.ua
-pl=["",
-"<script>alert(123)</script>",
-"<a onmouseover=alert(123)>Hey there</a>",
-"<sCRipt>alert(123)</sCRipt>",
-'<button onclick="alert(123)">Click me</button>',
-'<input type="text" onkeypress="alert(123)">',
-'<input type="text" onfocus="alert(123)">',
-'<inPuT type="text" onfocus="alert(123)">',
-"<img src=xss.png onerror=alert('Boom!')>",
-"<img src=xss.png OnerRor=alert('Boom!')>",
-"<ImG src=xss.png OnerRor=alert('Boom!')>"]
-pl+=bane.xsspayloads
+li=bane.read_file('xss.txt')
+pl=[]
+for x in li:
+ pl.append(x.strip())
 prox=[""]
 prox+=bane.http(200)
 global target
@@ -85,11 +99,13 @@ user_agent=ttk.Combobox(main, values=ua)
 user_agent.current(1)
 global payload
 payload = ttk.Combobox(main, values=pl)
-payload.current(1)
+payload.current(0)
 global proxy
 proxy=ttk.Combobox(main, values=prox)
 global refresh
 refresh=ttk.Combobox(main, values=["On", "Off"])
+global crawl
+crawl=ttk.Combobox(main, values=["On", "Off"])
 
 target.grid(row=0, column=1)
 target.config(width=30)
@@ -110,8 +126,12 @@ proxy.config(width=30)
 refresh.grid(row=7, column=1)
 refresh.current(1)
 refresh.config(width=30)
+crawl.grid(row=8, column=1)
+crawl.current(0)
+crawl.config(width=30)
 
-Button(main, text='Quit', command=main.destroy).grid(row=10, column=0, sticky=W, pady=4)
-Button(main, text='Scan', command=scan).grid(row=10, column=4, sticky=W, pady=4)
-Label(main, text = "\n\nCoder: Ala Bouali\nGithub: https://github.com/AlaBouali\nE-mail: trap.leader.123@gmail.com\n\nDisclaimer:\nThis tool is for educational purposes only!!!\n\n\n", background='light sky blue').grid(row=11,column=1)
+Button(main, text='Quit', command=main.destroy).grid(row=11, column=0, sticky=W, pady=4)
+Button(main, text='Stop', command=kill).grid(row=11, column=2, sticky=W, pady=4)
+Button(main, text='Scan', command=scan).grid(row=11, column=4, sticky=W, pady=4)
+Label(main, text = "\n\nCoder: Ala Bouali\nGithub: https://github.com/AlaBouali\nE-mail: trap.leader.123@gmail.com\n\nDisclaimer:\nThis tool is for educational purposes only!!!\n\n\n", background='light sky blue').grid(row=12,column=1)
 mainloop()
