@@ -58,6 +58,7 @@ class ki(threading.Thread):
  def run(self):
   global stop
   stop=True
+  bane.vulns.stop=True
 
 def kill():
  ki().start()
