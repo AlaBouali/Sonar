@@ -82,8 +82,7 @@ ua=[""]
 ua+=bane.ua
 li=bane.read_file('xss.txt')
 pl=['']
-for x in li:
- pl.append(x.strip())
+pl+=bane.xsspayloads
 prox=[""]
 prox+=bane.http(200)
 global target
